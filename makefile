@@ -21,7 +21,7 @@ DEFS = -DLINUX_INLINE -DHAVE_CONFIG_H -I.
 CFLAGS = -g -O2 -m$(BITS)
 
 OBJS = addition_scs.o multiplication_scs.o \
-     division_scs.o double2scs.o scs2double.o zero_scs.o \
+     double2scs.o scs2double.o zero_scs.o \
      trigo_fast.o tan.o sine.o cosine.o \
      exp.o logsix.o exp_fast.o log_fast.o \
      atan.o atan_fast.o division_scs.o \
