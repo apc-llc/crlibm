@@ -1,7 +1,6 @@
 # TODO:
 # 1) triple and data layout
 # 2) libdevice compatibility
-# 3) fma=true
 
 CC = gcc
 CLANG = /opt/llvm-3.0/bin/clang #-target=nvptx-nvidia-cl.1.0
@@ -12,10 +11,11 @@ LDBITS =
 ifeq ($(BITS), 32)
 	LDBITS := -melf_i386
 endif
+FMAD = 0
 
 CICC = /opt/cuda/nvvm/bin/cicc
 LIBDEVICE := -nvvmir-library $(shell dirname $(shell which $(CICC)))/../libdevice/libdevice.compute_$(GPUARCH).10.bc
-CICC += -arch compute_$(GPUARCH) -m$(BITS) -ftz=0 -prec_div=1 -prec_sqrt=1 -fmad=1 $(LIBDEVICE) --device-c
+CICC += -arch compute_$(GPUARCH) -m$(BITS) -ftz=0 -prec_div=1 -prec_sqrt=1 -fmad=$(FMAD) $(LIBDEVICE) --device-c
 
 DEFS = -DLINUX_INLINE -DHAVE_CONFIG_H -I.
 CFLAGS = -g -O2 -m$(BITS)
