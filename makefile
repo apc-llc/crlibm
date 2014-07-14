@@ -117,11 +117,8 @@ enable_xp.o: enable_xp.c enable_xp.i
 round_near.o: round_near.c round_near.i
 	$(CLANG) -m32 -std=c99 -W -Wall -pedantic -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && $(NVCC) -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -o $(basename $<).gpu.o && $(CC) -m32 -std=c99 -W -Wall -pedantic -c $< -o $<.o && ld $(LDBITS) -r $<.o $(basename $<).gpu.o -o $@
 
-#dtoa_c.o: dtoa_c.c dtoa_c.i
-#	$(CLANG) -m32 -std=c99 -W -Wall -pedantic -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && $(NVCC) -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -o $(basename $<).gpu.o && $(CC) -m32 -std=c99 -W -Wall -pedantic -c $< -o $<.o && ld $(LDBITS) -r $<.o $(basename $<).gpu.o -o $@
-
-dtoa_c.o: dtoa_c.c
-	$(CC) -m32 -std=c99 -W -Wall -pedantic -c dtoa_c.c
+dtoa_c.o: dtoa_c.c dtoa_c.i
+	$(CLANG) -m32 -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && sed -i s/\\.str/str/ $(basename $<).ptx && sed -i s/pow5mult\.p05/pow5mult_p05/ $(basename $<).ptx && $(NVCC) -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -o $(basename $<).gpu.o && $(CC) -m32 -std=c99 -W -Wall -pedantic -c $< -o $<.o && ld $(LDBITS) -r $<.o $(basename $<).gpu.o -o $@
 
 dtoaf.o: dtoaf.c dtoaf.i
 	$(CLANG) -m32 -std=c99 -W -Wall -pedantic -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && $(NVCC) -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -o $(basename $<).gpu.o && $(CC) -m32 -std=c99 -W -Wall -pedantic -c $< -o $<.o && ld $(LDBITS) -r $<.o $(basename $<).gpu.o -o $@

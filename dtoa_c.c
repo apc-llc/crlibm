@@ -230,7 +230,7 @@ extern void *MALLOC(size_t);
 #define PRIVATE_MEM 2304
 #endif
 #define PRIVATE_mem ((PRIVATE_MEM+sizeof(double)-1)/sizeof(double))
-static double private_mem[PRIVATE_mem], *pmem_next = private_mem;
+static double private_mem[PRIVATE_mem], *pmem_next = NULL;
 #endif
 
 #undef IEEE_Arith
@@ -552,6 +552,8 @@ Balloc
 	(int k)
 #endif
 {
+    if (!pmem_next) pmem_next = private_mem;
+
 	int x;
 	Bigint *rv;
 #ifndef Omit_Private_Memory
