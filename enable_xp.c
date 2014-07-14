@@ -1,7 +1,7 @@
 /* Initialise the IA32/64 FPU flags from Fortran */
 /* An init function which sets FPU flags when needed */
 
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(__CUDACC__)
 
 void enable_xp_(void)
 {
