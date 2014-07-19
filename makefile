@@ -11,6 +11,7 @@ ifeq ($(BITS), 32)
 	LDBITS := -melf_i386
 endif
 FMAD = 0
+PGFORTRAN = pgfortran
 
 CICC = /opt/cuda/nvvm/bin/cicc
 LIBDEVICE := -nvvmir-library $(shell dirname $(shell which $(CICC)))/../libdevice/libdevice.compute_$(GPUARCH).10.bc
@@ -24,9 +25,9 @@ OBJS = addition_scs.o multiplication_scs.o \
      trigo_fast.o tan.o sine.o cosine.o \
      exp.o logsix.o exp_fast.o log_fast.o \
      atan.o atan_fast.o division_scs.o \
-     ericc.o csh_fast.o log10.o rem_pio2.o \
+     csh_fast.o log10.o rem_pio2.o \
      dtoa_c.o dtoaf.o round_near.o disable_xp.o enable_xp.o \
-     exit.o
+     exit.o crlibm.o
 
 all: crlibm.a
 
@@ -105,9 +106,6 @@ atan_fast.o: atan_fast.c crlibm.h crlibm_private.h scs.h \
         atan_fast.h atan_fast.i
 	$(CLANG1) -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && $(NVCC) -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=$(shell echo \"$<_$(shell date)\" | base64  | sed s/=/_/g) -o $(basename $<).gpu.o && $(COMPILE1) -c $< -o $<.o && ld $(LDBITS) -r $<.o $(basename $<).gpu.o -o $@
 
-ericc.o: ericc.c crlibm.h crlibm_private.h ericc.i
-	$(CLANG1) -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && $(NVCC) -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=$(shell echo \"$<_$(shell date)\" | base64  | sed s/=/_/g) -o $(basename $<).gpu.o && $(COMPILE1) -c $< -o $<.o && ld $(LDBITS) -r $<.o $(basename $<).gpu.o -o $@
-
 disable_xp.o: disable_xp.c disable_xp.i
 	$(CLANG1) -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && $(NVCC) -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=$(shell echo \"$<_$(shell date)\" | base64  | sed s/=/_/g) -o $(basename $<).gpu.o && $(COMPILE1) -c $< -o $<.o && ld $(LDBITS) -r $<.o $(basename $<).gpu.o -o $@
 
@@ -149,6 +147,9 @@ zero_scs.o: zero_scs.c scs.h scs_config.h scs_private.h zero_scs.i
 
 exit.o: exit.cu
 	$(NVCC) -m$(BITS) -O3 --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=$(shell echo \"$<_$(shell date)\" | base64  | sed s/=/_/g) -c $< -o $@
+
+crlibm.o: crlibm.f90
+	$(PGFORTRAN) -fast -c -Mcuda=6.0,rdc,cc$(GPUARCH) $< -o $@
 
 clean:
 	rm -f $(OBJS) crlibm.a *.o *.i *.ptx *.bc
