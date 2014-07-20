@@ -11,7 +11,10 @@ ifeq ($(BITS), 32)
 	LDBITS := -melf_i386
 endif
 FMAD = 0
-PGFORTRAN = pgfortran
+FC ?= pgf90
+ifeq ($(FC),pgf90)
+FC += -DCUDAFOR -Mcuda=6.0,rdc,cc$(GPUARCH)
+endif
 
 CICC = /opt/cuda/nvvm/bin/cicc
 LIBDEVICE := -nvvmir-library $(shell dirname $(shell which $(CICC)))/../libdevice/libdevice.compute_$(GPUARCH).10.bc
@@ -148,8 +151,8 @@ zero_scs.o: zero_scs.c scs.h scs_config.h scs_private.h zero_scs.i
 exit.o: exit.cu
 	$(NVCC) -m$(BITS) -O3 --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=$(shell echo \"$<_$(shell date)\" | base64  | sed s/=/_/g) -c $< -o $@
 
-crlibm.o: crlibm.f90
-	$(PGFORTRAN) -fast -c -Mcuda=6.0,rdc,cc$(GPUARCH) $< -o $@
+crlibm.o: crlibm.F90
+	$(FC) -c -O3 $< -o $@
 
 clean:
 	rm -f $(OBJS) crlibm.a *.o *.i *.ptx *.bc
