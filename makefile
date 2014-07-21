@@ -155,5 +155,5 @@ crlibm.o: crlibm.F90
 	$(FC) -c -O3 $< -o $@
 
 clean:
-	rm -f $(OBJS) crlibm.a *.o *.i *.ptx *.bc
+	rm -f $(OBJS) crlibm.a *.o *.i *.ptx *.bc *.mod
 
