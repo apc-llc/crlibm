@@ -11,7 +11,6 @@ ifeq ($(BITS), 32)
 	LDBITS := -melf_i386
 endif
 FMAD = 0
-FC ?= pgf90
 ifeq ($(FC),pgf90)
 FC += -DCUDAFOR -Mcuda=6.0,rdc,cc$(GPUARCH)
 endif
@@ -30,7 +29,11 @@ OBJS = addition_scs.o multiplication_scs.o \
      atan.o atan_fast.o division_scs.o \
      csh_fast.o log10.o rem_pio2.o \
      dtoa_c.o dtoaf.o round_near.o disable_xp.o enable_xp.o \
-     exit.o crlibm.o
+     crlibm.o
+
+ifeq ($(FC),pgf90)
+OBJS += exit.o
+endif
 
 all: crlibm.a
 
@@ -148,8 +151,10 @@ scs2double.o: scs2double.c scs.h scs_config.h scs_private.h scs2double.i
 zero_scs.o: zero_scs.c scs.h scs_config.h scs_private.h zero_scs.i
 	$(CLANG2) -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && $(NVCC) -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=$(shell echo \"$<_$(shell date)\" | base64  | sed s/=/_/g) -o $(basename $<).gpu.o && $(COMPILE1) -c $< -o $<.o && ld $(LDBITS) -r $<.o $(basename $<).gpu.o -o $@
 
+ifeq ($(FC),pgf90)
 exit.o: exit.cu
 	$(NVCC) -m$(BITS) -O3 --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=$(shell echo \"$<_$(shell date)\" | base64  | sed s/=/_/g) -c $< -o $@
+endif
 
 crlibm.o: crlibm.F90
 	$(FC) -c -O3 $< -o $@
