@@ -155,7 +155,7 @@ zero_scs.o: zero_scs.c scs.h scs_config.h scs_private.h zero_scs.i
 
 ifeq ($(FC),pgf90)
 exit.o: exit.cu
-	$(NVCC) -m$(BITS) -O0 -g --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -c $< -o $<.o && objcopy --redefine-sym exit=exit_defined_by_stupid_cuda $<.o $@
+	$(NVCC) -m$(BITS) -O3 --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -c $< -o $<.o && objcopy --redefine-sym exit=exit_defined_by_stupid_cuda $<.o $@
 endif
 
 crlibm.o: crlibm.F90
