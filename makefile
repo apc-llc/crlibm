@@ -153,7 +153,7 @@ zero_scs.o: zero_scs.c scs.h scs_config.h scs_private.h zero_scs.i
 
 ifeq ($(FC),pgf90)
 exit.o: exit.cu
-	$(NVCC) -m$(BITS) -O3 --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=$(shell echo \"$<_$(shell date)\" | base64  | sed s/=/_/g) -c $< -o $@
+	$(NVCC) -m$(BITS) -O3 --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -c $< -o $@
 endif
 
 crlibm.o: crlibm.F90
