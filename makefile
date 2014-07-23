@@ -13,9 +13,6 @@ ifeq ($(BITS), 32)
 	LDBITS := -melf_i386
 endif
 FMAD = 0
-ifeq ($(FC),pgf90)
-FC += -DCUDAFOR -Mcuda=6.0,rdc,cc$(GPUARCH)
-endif
 
 CICC = /opt/cuda/nvvm/bin/cicc
 LIBDEVICE := -nvvmir-library $(shell dirname $(shell which $(CICC)))/../libdevice/libdevice.compute_$(GPUARCH).10.bc
@@ -23,6 +20,7 @@ CICC += -arch compute_$(GPUARCH) -m$(BITS) -ftz=0 -prec_div=1 -prec_sqrt=1 -fmad
 
 DEFS = -DLINUX_INLINE -DHAVE_CONFIG_H -I.
 CFLAGS = -g -O2 -m$(BITS)
+FFLAGS = -g -O2 -m$(BITS)
 
 OBJS = addition_scs.o multiplication_scs.o \
      double2scs.o scs2double.o zero_scs.o \
@@ -35,6 +33,7 @@ OBJS = addition_scs.o multiplication_scs.o \
 
 ifeq ($(FC),pgf90)
 OBJS += exit.o
+FFLAGS += -DCUDAFOR -Mcuda=6.0,rdc,cc$(GPUARCH)
 endif
 
 all: crlibm.a
@@ -159,7 +158,7 @@ exit.o: exit.cu
 endif
 
 crlibm.o: crlibm.F90
-	$(FC) -c -O3 $< -o $@
+	$(FC) $(FFLAGS) -c $< -o $@
 
 clean:
 	rm -f $(OBJS) crlibm.a *.o *.i *.ptx *.bc *.mod
