@@ -1,7 +1,7 @@
 # TODO:
 # 1) triple and data layout
 
-.SUFFIXES: .cu
+.SUFFIXES: .cu .CUF
 
 CC = gcc
 CLANG = /opt/llvm-3.0/bin/clang #-march=nvptx
@@ -29,10 +29,10 @@ OBJS = addition_scs.o multiplication_scs.o \
      atan.o atan_fast.o division_scs.o \
      csh_fast.o log10.o rem_pio2.o \
      dtoa_c.o dtoaf.o round_near.o disable_xp.o enable_xp.o \
-     crlibm.o
+     crlibm.cpu.o
 
 ifeq ($(FC),pgf90)
-OBJS += exit.o
+OBJS += crlibm.gpu.o exit.o
 FFLAGS += -DCUDAFOR -Mcuda=6.0,rdc,cc$(GPUARCH)
 endif
 
@@ -157,8 +157,16 @@ exit.o: exit.cu
 	$(NVCC) -m$(BITS) -O3 --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -c $< -o $<.o && objcopy --redefine-sym exit=exit_defined_by_stupid_cuda $<.o $@
 endif
 
-crlibm.o: crlibm.F90
-	$(FC) $(FFLAGS) -c $< -o $@
+CRLIBM_MODULES := crlibm=crlibm
+CRLIBM_MODULES := $(addprefix -D, $(CRLIBM_MODULES))
+CRLIBM_MODULES_GPU := $(addsuffix _gpu, $(CRLIBM_MODULES))
+CRLIBM_MODULES_CPU :=
+
+crlibm.gpu.o: crlibm.CUF
+	$(FC) -c $(FFLAGS) $< $(CRLIBM_MODULES_GPU) -o $@ -DGPU
+
+crlibm.cpu.o: crlibm.CUF
+	$(FC) -c $(FFLAGS) $< $(CRLIBM_MODULES_CPU) -o $@
 
 clean:
 	rm -f $(OBJS) crlibm.a *.o *.i *.ptx *.bc *.mod

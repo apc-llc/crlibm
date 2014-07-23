@@ -1,0 +1,181 @@
+module crlibm
+
+interface
+
+#ifdef GPU
+  attributes(device) &
+#endif
+  function exp_rn(x) bind(C)
+  use iso_c_binding
+  implicit none
+  double precision :: exp_rn
+  double precision, value :: x
+  end function
+
+#ifdef GPU
+  attributes(device) & 
+#endif
+  function log_rn(x) bind(C)
+  use iso_c_binding
+  implicit none
+  double precision :: log_rn
+  double precision, value :: x
+  end function
+
+#ifdef GPU
+  attributes(device) & 
+#endif
+  function log10_rn(x) bind(C)
+  use iso_c_binding
+  implicit none
+  double precision :: log10_rn
+  double precision, value :: x
+  end function
+
+#ifdef GPU
+  attributes(device) & 
+#endif
+  function atan_rn(x) bind(C)
+  use iso_c_binding
+  implicit none
+  double precision :: atan_rn
+  double precision, value :: x
+  end function
+
+#ifdef GPU
+  attributes(device) & 
+#endif
+  function tan_rn(x) bind(C)
+  use iso_c_binding
+  implicit none
+  double precision :: tan_rn
+  double precision, value :: x
+  end function
+
+#ifdef GPU
+  attributes(device) & 
+#endif
+  function sin_rn(x) bind(C)
+  use iso_c_binding
+  implicit none
+  double precision :: sin_rn
+  double precision, value :: x
+  end function
+
+#ifdef GPU
+  attributes(device) & 
+#endif
+  function cos_rn(x) bind(C)
+  use iso_c_binding
+  implicit none
+  double precision :: cos_rn
+  double precision, value :: x
+  end function
+
+#ifdef GPU
+  attributes(device) & 
+#endif
+  function sinh_rn(x) bind(C)
+  use iso_c_binding
+  implicit none
+  double precision :: sinh_rn
+  double precision, value :: x
+  end function
+
+#ifdef GPU
+  attributes(device) & 
+#endif
+  function cosh_rn(x) bind(C)
+  use iso_c_binding
+  implicit none
+  double precision :: cosh_rn
+  double precision, value :: x
+  end function
+
+end interface
+
+contains
+
+#ifdef GPU
+  attributes(device) & 
+#endif
+  function asin_rn(x)
+  implicit none
+  double precision :: asin_rn
+  double precision, value :: x
+  double precision :: pi2
+  data pi2 /1.5707963267948966d0/
+  if (x.ne.x) then ! NaN
+    asin_rn=x
+    return
+  endif
+  if (abs(x).eq.1.0d0) then
+    asin_rn=sign(pi2,x)
+  else
+    !       asin_rn=atan_rn(x/sqrt(1.0d0-x*x))
+    ! Try using (1-x)*(1+x) in case x is very small.........
+    ! or close to 1.....write a test program!!!
+    asin_rn=atan_rn(x/sqrt((1.0d0-x)*(1.0d0+x)))
+  endif
+  end
+
+#ifdef GPU
+  attributes(device) & 
+#endif
+  function acos_rn(x)
+  implicit none
+  double precision :: acos_rn
+  double precision, value :: x
+  double precision :: pi,pi2
+  data pi  /3.1415926535897932d0/
+  data pi2 /1.5707963267948966d0/
+  if (x.ne.x) then ! NaN
+    acos_rn=x
+  elseif (abs(x).eq.0.0d0) then
+    acos_rn=pi2
+  else
+!       acos_rn=atan_rn(sqrt(1.0d0-x*x)/x)
+! Try using (1-x)*(1+x) in case x is very small.........
+! or close to 1.....write a test program!!!
+     acos_rn=atan_rn(sqrt((1.0d0-x)*(1.0d0+x))/x)
+    if (x.lt.0.0d0) then
+      acos_rn=pi+acos_rn
+    endif
+  endif
+  end
+
+#ifdef GPU
+  attributes(device) & 
+#endif      
+  function atan2_rn(y,x)
+  implicit none
+  double precision :: atan2_rn
+  double precision, value :: y,x
+  double precision :: pi,pi2
+  data pi  /3.1415926535897932d0/
+  data pi2 /1.5707963267948966d0/
+  if (x.eq.0d0) then
+     if (y.eq.0d0) then
+! Should get me a NaN
+       atan2_rn=atan_rn(y/x)
+     else
+       atan2_rn=sign(pi2,y)
+     endif
+  else
+    if (y.eq.0d0) then
+      if (x.gt.0d0) then
+        atan2_rn=0d0
+      else
+        atan2_rn=pi
+      endif
+    else
+      atan2_rn=atan_rn(y/x)
+      if (x.lt.0d0) then
+        atan2_rn=sign(pi,y)+atan2_rn
+      endif
+    endif
+  endif
+  end
+
+end module crlibm
+
