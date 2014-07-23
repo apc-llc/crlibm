@@ -34,6 +34,8 @@ OBJS = addition_scs.o multiplication_scs.o \
 ifeq ($(FC),pgf90)
 OBJS += crlibm.gpu.o exit.o
 FFLAGS += -DCUDAFOR -Mcuda=6.0,rdc,cc$(GPUARCH)
+else
+FFLAGS += -x f95 -cpp
 endif
 
 all: crlibm.a
