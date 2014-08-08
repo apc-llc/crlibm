@@ -52,50 +52,74 @@ CLANG1 = $(CLANG) $(DEFS) $(AM1_CFLAGS) $(filter-out -g, $(CFLAGS)) -D__CUDACC__
 
 ifeq ($(FC),pgf90)
 csh_fast.o: csh_fast.c crlibm.h crlibm_private.h scs.h \
-        scs_config.h scs_private.h crlibm_config.h \
-        csh_fast.h csh_fast.i
+	scs_config.h scs_private.h crlibm_config.h \
+	csh_fast.h csh_fast.i
 	$(CLANG1) -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && touch $(basename $<).def.cu && $(NVCC) -m$(BITS) $(basename $<).def.cu --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -o $@.def.o -keep && touch $(basename $<).def.module_id && objcopy --weaken-symbol=__fatbinwrap`cat $(basename $<).def.module_id` $@.def.o && $(NVCC) -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=`cat $(basename $<).def.module_id` -o $@.ptx.o && $(COMPILE1) -c $< -o $<.cpu.o && ld $(LDBITS) -r $<.cpu.o $@.ptx.o $@.def.o -o $@
 else
+csh_fast.o: csh_fast.c crlibm.h crlibm_private.h scs.h \
+	scs_config.h scs_private.h crlibm_config.h \
+	csh_fast.h csh_fast.i
+	$(COMPILE1) -c $< -o $@
 endif
 
 ifeq ($(FC),pgf90)
 rem_pio2.o: rem_pio2.c crlibm.h crlibm_private.h scs.h \
-        scs_config.h scs_private.h crlibm_config.h \
-        coefpi2.h rem_pio2.i
+	scs_config.h scs_private.h crlibm_config.h \
+	coefpi2.h rem_pio2.i
 	$(CLANG1) -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && touch $(basename $<).def.cu && $(NVCC) -m$(BITS) $(basename $<).def.cu --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -o $@.def.o -keep && touch $(basename $<).def.module_id && objcopy --weaken-symbol=__fatbinwrap`cat $(basename $<).def.module_id` $@.def.o && $(NVCC) -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=`cat $(basename $<).def.module_id` -o $@.ptx.o && $(COMPILE1) -c $< -o $<.cpu.o && ld $(LDBITS) -r $<.cpu.o $@.ptx.o $@.def.o -o $@
 else
+rem_pio2.o: rem_pio2.c crlibm.h crlibm_private.h scs.h \
+	scs_config.h scs_private.h crlibm_config.h \
+	coefpi2.h rem_pio2.i
+	$(COMPILE1) -c $< -o $@
 endif
 
 ifeq ($(FC),pgf90)
 trigo_fast.o: trigo_fast.c crlibm.h crlibm_private.h scs.h \
-        scs_config.h scs_private.h crlibm_config.h \
-        trigo_fast.h trigo_fast.i
+	scs_config.h scs_private.h crlibm_config.h \
+	trigo_fast.h trigo_fast.i
 	$(CLANG1) -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && touch $(basename $<).def.cu && $(NVCC) -m$(BITS) $(basename $<).def.cu --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -o $@.def.o -keep && touch $(basename $<).def.module_id && objcopy --weaken-symbol=__fatbinwrap`cat $(basename $<).def.module_id` $@.def.o && $(NVCC) -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=`cat $(basename $<).def.module_id` -o $@.ptx.o && $(COMPILE1) -c $< -o $<.cpu.o && ld $(LDBITS) -r $<.cpu.o $@.ptx.o $@.def.o -o $@
 else
+trigo_fast.o: trigo_fast.c crlibm.h crlibm_private.h scs.h \
+	scs_config.h scs_private.h crlibm_config.h \
+	trigo_fast.h trigo_fast.i
+	$(COMPILE1) -c $< -o $@
 endif
 
 ifeq ($(FC),pgf90)
 tan.o: tan.c crlibm.h crlibm_private.h scs.h \
-        scs_config.h scs_private.h crlibm_config.h \
-        tan.h tan.i
+	scs_config.h scs_private.h crlibm_config.h \
+	tan.h tan.i
 	$(CLANG1) -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && touch $(basename $<).def.cu && $(NVCC) -m$(BITS) $(basename $<).def.cu --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -o $@.def.o -keep && touch $(basename $<).def.module_id && objcopy --weaken-symbol=__fatbinwrap`cat $(basename $<).def.module_id` $@.def.o && $(NVCC) -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=`cat $(basename $<).def.module_id` -o $@.ptx.o && $(COMPILE1) -c $< -o $<.cpu.o && ld $(LDBITS) -r $<.cpu.o $@.ptx.o $@.def.o -o $@
 else
+tan.o: tan.c crlibm.h crlibm_private.h scs.h \
+	scs_config.h scs_private.h crlibm_config.h \
+	tan.h tan.i
+	$(COMPILE1) -c $< -o $@
 endif
 
 ifeq ($(FC),pgf90)
 sine.o: sine.c crlibm.h crlibm_private.h scs.h \
-        scs_config.h scs_private.h crlibm_config.h \
-        sine.h sine.i
+	scs_config.h scs_private.h crlibm_config.h \
+	sine.h sine.i
 	$(CLANG1) -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && touch $(basename $<).def.cu && $(NVCC) -m$(BITS) $(basename $<).def.cu --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -o $@.def.o -keep && touch $(basename $<).def.module_id && objcopy --weaken-symbol=__fatbinwrap`cat $(basename $<).def.module_id` $@.def.o && $(NVCC) -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=`cat $(basename $<).def.module_id` -o $@.ptx.o && $(COMPILE1) -c $< -o $<.cpu.o && ld $(LDBITS) -r $<.cpu.o $@.ptx.o $@.def.o -o $@
 else
+sine.o: sine.c crlibm.h crlibm_private.h scs.h \
+	scs_config.h scs_private.h crlibm_config.h \
+	sine.h sine.i
+	$(COMPILE1) -c $< -o $@
 endif
 
 ifeq ($(FC),pgf90)
 cosine.o: cosine.c crlibm.h crlibm_private.h scs.h \
-        scs_config.h scs_private.h crlibm_config.h \
-        cosine.h cosine.i
+	scs_config.h scs_private.h crlibm_config.h \
+	cosine.h cosine.i
 	$(CLANG1) -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && touch $(basename $<).def.cu && $(NVCC) -m$(BITS) $(basename $<).def.cu --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -o $@.def.o -keep && touch $(basename $<).def.module_id && objcopy --weaken-symbol=__fatbinwrap`cat $(basename $<).def.module_id` $@.def.o && $(NVCC) -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=`cat $(basename $<).def.module_id` -o $@.ptx.o && $(COMPILE1) -c $< -o $<.cpu.o && ld $(LDBITS) -r $<.cpu.o $@.ptx.o $@.def.o -o $@
 else
+cosine.o: cosine.c crlibm.h crlibm_private.h scs.h \
+	scs_config.h scs_private.h crlibm_config.h \
+	cosine.h cosine.i
+	$(COMPILE1) -c $< -o $@
 endif
 
 ifeq ($(FC),pgf90)
@@ -104,6 +128,10 @@ exp.o: exp.c crlibm.h crlibm_private.h scs.h \
 	exp.h exp.i
 	$(CLANG1) -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && touch $(basename $<).def.cu && $(NVCC) -m$(BITS) $(basename $<).def.cu --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -o $@.def.o -keep && touch $(basename $<).def.module_id && objcopy --weaken-symbol=__fatbinwrap`cat $(basename $<).def.module_id` $@.def.o && $(NVCC) -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=`cat $(basename $<).def.module_id` -o $@.ptx.o && $(COMPILE1) -c $< -o $<.cpu.o && ld $(LDBITS) -r $<.cpu.o $@.ptx.o $@.def.o -o $@
 else
+exp.o: exp.c crlibm.h crlibm_private.h scs.h \
+	scs_config.h scs_private.h crlibm_config.h \
+	exp.h exp.i
+	$(COMPILE1) -c $< -o $@
 endif
 
 ifeq ($(FC),pgf90)
@@ -112,30 +140,46 @@ exp_fast.o: exp_fast.c crlibm.h crlibm_private.h scs.h \
 	exp_fast.h exp_fast.i
 	$(CLANG1) -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && touch $(basename $<).def.cu && $(NVCC) -m$(BITS) $(basename $<).def.cu --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -o $@.def.o -keep && touch $(basename $<).def.module_id && objcopy --weaken-symbol=__fatbinwrap`cat $(basename $<).def.module_id` $@.def.o && $(NVCC) -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=`cat $(basename $<).def.module_id` -o $@.ptx.o && $(COMPILE1) -c $< -o $<.cpu.o && ld $(LDBITS) -r $<.cpu.o $@.ptx.o $@.def.o -o $@
 else
+exp_fast.o: exp_fast.c crlibm.h crlibm_private.h scs.h \
+	scs_config.h scs_private.h crlibm_config.h \
+	exp_fast.h exp_fast.i
+	$(COMPILE1) -c $< -o $@
 endif
 
 ifeq ($(FC),pgf90)
 logsix.o: logsix.c logsix.h crlibm.h crlibm_private.h scs.h \
 	scs_config.h scs_private.h crlibm_config.h \
-        logsix.h logsix.i
+	logsix.h logsix.i
 	$(CLANG1) -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && touch $(basename $<).def.cu && $(NVCC) -m$(BITS) $(basename $<).def.cu --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -o $@.def.o -keep && touch $(basename $<).def.module_id && objcopy --weaken-symbol=__fatbinwrap`cat $(basename $<).def.module_id` $@.def.o && $(NVCC) -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=`cat $(basename $<).def.module_id` -o $@.ptx.o && $(COMPILE1) -c $< -o $<.cpu.o && ld $(LDBITS) -r $<.cpu.o $@.ptx.o $@.def.o -o $@
 else
+logsix.o: logsix.c logsix.h crlibm.h crlibm_private.h scs.h \
+	scs_config.h scs_private.h crlibm_config.h \
+	logsix.h logsix.i
+	$(COMPILE1) -c $< -o $@
 endif
 
 ifeq ($(FC),pgf90)
 log_fast.o: log_fast.c crlibm.h crlibm_private.h scs.h \
 	scs_config.h scs_private.h crlibm_config.h \
-        log_fast.h log_fast.i
+	log_fast.h log_fast.i
 	$(CLANG1) -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && touch $(basename $<).def.cu && $(NVCC) -m$(BITS) $(basename $<).def.cu --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -o $@.def.o -keep && touch $(basename $<).def.module_id && objcopy --weaken-symbol=__fatbinwrap`cat $(basename $<).def.module_id` $@.def.o && $(NVCC) -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=`cat $(basename $<).def.module_id` -o $@.ptx.o && $(COMPILE1) -c $< -o $<.cpu.o && ld $(LDBITS) -r $<.cpu.o $@.ptx.o $@.def.o -o $@
 else
+log_fast.o: log_fast.c crlibm.h crlibm_private.h scs.h \
+	scs_config.h scs_private.h crlibm_config.h \
+	log_fast.h log_fast.i
+	$(COMPILE1) -c $< -o $@
 endif
 
 ifeq ($(FC),pgf90)
 log10.o: log10.c log10.h crlibm.h crlibm_private.h scs.h \
 	scs_config.h scs_private.h crlibm_config.h \
-        log10.h log10.i
+	log10.h log10.i
 	$(CLANG1) -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && touch $(basename $<).def.cu && $(NVCC) -m$(BITS) $(basename $<).def.cu --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -o $@.def.o -keep && touch $(basename $<).def.module_id && objcopy --weaken-symbol=__fatbinwrap`cat $(basename $<).def.module_id` $@.def.o && $(NVCC) -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=`cat $(basename $<).def.module_id` -o $@.ptx.o && $(COMPILE1) -c $< -o $<.cpu.o && ld $(LDBITS) -r $<.cpu.o $@.ptx.o $@.def.o -o $@
 else
+log10.o: log10.c log10.h crlibm.h crlibm_private.h scs.h \
+	scs_config.h scs_private.h crlibm_config.h \
+	log10.h log10.i
+	$(COMPILE1) -c $< -o $@
 endif
 
 ifeq ($(FC),pgf90)
@@ -144,44 +188,62 @@ atan.o: atan.c atan.h crlibm.h crlibm_private.h scs.h \
         atan_fast.h atan.i
 	$(CLANG1) -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && touch $(basename $<).def.cu && $(NVCC) -m$(BITS) $(basename $<).def.cu --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -o $@.def.o -keep && touch $(basename $<).def.module_id && objcopy --weaken-symbol=__fatbinwrap`cat $(basename $<).def.module_id` $@.def.o && $(NVCC) -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=`cat $(basename $<).def.module_id` -o $@.ptx.o && $(COMPILE1) -c $< -o $<.cpu.o && ld $(LDBITS) -r $<.cpu.o $@.ptx.o $@.def.o -o $@
 else
+atan.o: atan.c atan.h crlibm.h crlibm_private.h scs.h \
+	scs_config.h scs_private.h crlibm_config.h \
+	atan_fast.h atan.i
+	$(COMPILE1) -c $< -o $@
 endif
 
 ifeq ($(FC),pgf90)
 atan_fast.o: atan_fast.c crlibm.h crlibm_private.h scs.h \
-        scs_config.h scs_private.h crlibm_config.h \
-        atan_fast.h atan_fast.i
+	scs_config.h scs_private.h crlibm_config.h \
+	atan_fast.h atan_fast.i
 	$(CLANG1) -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && touch $(basename $<).def.cu && $(NVCC) -m$(BITS) $(basename $<).def.cu --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -o $@.def.o -keep && touch $(basename $<).def.module_id && objcopy --weaken-symbol=__fatbinwrap`cat $(basename $<).def.module_id` $@.def.o && $(NVCC) -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=`cat $(basename $<).def.module_id` -o $@.ptx.o && $(COMPILE1) -c $< -o $<.cpu.o && ld $(LDBITS) -r $<.cpu.o $@.ptx.o $@.def.o -o $@
 else
+atan_fast.o: atan_fast.c crlibm.h crlibm_private.h scs.h \
+	scs_config.h scs_private.h crlibm_config.h \
+	atan_fast.h atan_fast.i
+	$(COMPILE1) -c $< -o $@
 endif
 
 ifeq ($(FC),pgf90)
 disable_xp.o: disable_xp.c disable_xp.i
 	$(CLANG1) -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && touch $(basename $<).def.cu && $(NVCC) -m$(BITS) $(basename $<).def.cu --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -o $@.def.o -keep && touch $(basename $<).def.module_id && objcopy --weaken-symbol=__fatbinwrap`cat $(basename $<).def.module_id` $@.def.o && $(NVCC) -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=`cat $(basename $<).def.module_id` -o $@.ptx.o && $(COMPILE1) -c $< -o $<.cpu.o && ld $(LDBITS) -r $<.cpu.o $@.ptx.o $@.def.o -o $@
 else
+disable_xp.o: disable_xp.c disable_xp.i
+	$(COMPILE1) -c $< -o $@
 endif
 
 ifeq ($(FC),pgf90)
 enable_xp.o: enable_xp.c enable_xp.i
 	$(CLANG1) -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && touch $(basename $<).def.cu && $(NVCC) -m$(BITS) $(basename $<).def.cu --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -o $@.def.o -keep && touch $(basename $<).def.module_id && objcopy --weaken-symbol=__fatbinwrap`cat $(basename $<).def.module_id` $@.def.o && $(NVCC) -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=`cat $(basename $<).def.module_id` -o $@.ptx.o && $(COMPILE1) -c $< -o $<.cpu.o && ld $(LDBITS) -r $<.cpu.o $@.ptx.o $@.def.o -o $@
 else
+enable_xp.o: enable_xp.c enable_xp.i
+	$(COMPILE1) -c $< -o $@
 endif
 
 ifeq ($(FC),pgf90)
 round_near.o: round_near.c round_near.i
 	$(CLANG) -m32 -std=c99 -W -Wall -pedantic -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -O0 -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && touch $(basename $<).def.cu && $(NVCC) -m$(BITS) $(basename $<).def.cu --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -o $@.def.o -keep && touch $(basename $<).def.module_id && objcopy --weaken-symbol=__fatbinwrap`cat $(basename $<).def.module_id` $@.def.o && $(NVCC) -O0 -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=`cat $(basename $<).def.module_id` -o $@.ptx.o && $(CC) -m32 -std=c99 -W -Wall -pedantic -c $< -o $<.cpu.o && ld $(LDBITS) -r $<.cpu.o $@.ptx.o $@.def.o -o $@
 else
+round_near.o: round_near.c round_near.i
+	$(CC) -m32 -std=c99 -W -Wall -pedantic -c $< -o $@
 endif
 
 ifeq ($(FC),pgf90)
 dtoa_c.o: dtoa_c.c dtoa_c.i
 	$(CLANG) -m32 -std=c99 -W -Wall -pedantic -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -O0 -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && sed -i s/\\.str/str/ $(basename $<).ptx && sed -i s/pow5mult\.p05/pow5mult_p05/ $(basename $<).ptx && touch $(basename $<).def.cu && $(NVCC) -m$(BITS) $(basename $<).def.cu --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -o $@.def.o -keep && touch $(basename $<).def.module_id && objcopy --weaken-symbol=__fatbinwrap`cat $(basename $<).def.module_id` $@.def.o && $(NVCC) -O0 -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=`cat $(basename $<).def.module_id` -o $@.ptx.o && $(CC) -m32 -std=c99 -W -Wall -pedantic -c $< -o $<.cpu.o && ld $(LDBITS) -r $<.cpu.o $@.ptx.o $@.def.o -o $@
 else
+dtoa_c.o: dtoa_c.c dtoa_c.i
+	$(CC) -m32 -std=c99 -W -Wall -pedantic -c $< -o $@
 endif
 
 ifeq ($(FC),pgf90)
 dtoaf.o: dtoaf.c dtoaf.i
 	$(CLANG) -m32 -std=c99 -W -Wall -pedantic -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -O0 -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && touch $(basename $<).def.cu && $(NVCC) -m$(BITS) $(basename $<).def.cu --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -o $@.def.o -keep && touch $(basename $<).def.module_id && objcopy --weaken-symbol=__fatbinwrap`cat $(basename $<).def.module_id` $@.def.o && $(NVCC) -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=`cat $(basename $<).def.module_id` -o $@.ptx.o && $(CC) -m32 -std=c99 -W -Wall -pedantic -c $< -o $<.cpu.o && ld $(LDBITS) -r $<.cpu.o $@.ptx.o $@.def.o -o $@
 else
+dtoaf.o: dtoaf.c dtoaf.i
+	$(CC) -m32 -std=c99 -W -Wall -pedantic -c $< -o $@
 endif
 
 AM2_CFLAGS = -Wall -Wshadow -Wpointer-arith -Wcast-align -Wconversion -Waggregate-return -Wstrict-prototypes -Wnested-externs -Wlong-long -Winline 
@@ -192,12 +254,16 @@ ifeq ($(FC),pgf90)
 addition_scs.o: addition_scs.c scs.h scs_config.h scs_private.h addition_scs.i
 	$(CLANG2) -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && touch $(basename $<).def.cu && $(NVCC) -m$(BITS) $(basename $<).def.cu --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -o $@.def.o -keep && touch $(basename $<).def.module_id && objcopy --weaken-symbol=__fatbinwrap`cat $(basename $<).def.module_id` $@.def.o && $(NVCC) -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=`cat $(basename $<).def.module_id` -o $@.ptx.o && $(COMPILE2) -c $< -o $<.cpu.o && ld $(LDBITS) -r $<.cpu.o $@.ptx.o $@.def.o -o $@
 else
+addition_scs.o: addition_scs.c scs.h scs_config.h scs_private.h addition_scs.i
+	$(COMPILE2) -c $< -o $@
 endif
 
 ifeq ($(FC),pgf90)
 double2scs.o: double2scs.c scs.h scs_config.h scs_private.h double2scs.i
 	$(CLANG2) -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && touch $(basename $<).def.cu && $(NVCC) -m$(BITS) $(basename $<).def.cu --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -o $@.def.o -keep && touch $(basename $<).def.module_id && objcopy --weaken-symbol=__fatbinwrap`cat $(basename $<).def.module_id` $@.def.o && $(NVCC) -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=`cat $(basename $<).def.module_id` -o $@.ptx.o && $(COMPILE2) -c $< -o $<.cpu.o && ld $(LDBITS) -r $<.cpu.o $@.ptx.o $@.def.o -o $@
 else
+double2scs.o: double2scs.c scs.h scs_config.h scs_private.h double2scs.i
+	$(COMPILE2) -c $< -o $@
 endif
 
 ifeq ($(FC),pgf90)
@@ -205,6 +271,9 @@ multiplication_scs.o: multiplication_scs.c scs.h scs_config.h \
 	scs_private.h multiplication_scs.i
 	$(CLANG2) -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && touch $(basename $<).def.cu && $(NVCC) -m$(BITS) $(basename $<).def.cu --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -o $@.def.o -keep && touch $(basename $<).def.module_id && objcopy --weaken-symbol=__fatbinwrap`cat $(basename $<).def.module_id` $@.def.o && $(NVCC) -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=`cat $(basename $<).def.module_id` -o $@.ptx.o && $(COMPILE2) -c $< -o $<.cpu.o && ld $(LDBITS) -r $<.cpu.o $@.ptx.o $@.def.o -o $@
 else
+multiplication_scs.o: multiplication_scs.c scs.h scs_config.h \
+	scs_private.h multiplication_scs.i
+	$(COMPILE2) -c $< -o $@
 endif
 
 ifeq ($(FC),pgf90)
@@ -212,18 +281,25 @@ division_scs.o: division_scs.c scs.h scs_config.h \
 	scs_private.h division_scs.i
 	$(CLANG2) -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && touch $(basename $<).def.cu && $(NVCC) -m$(BITS) $(basename $<).def.cu --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -o $@.def.o -keep && touch $(basename $<).def.module_id && objcopy --weaken-symbol=__fatbinwrap`cat $(basename $<).def.module_id` $@.def.o && $(NVCC) -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=`cat $(basename $<).def.module_id` -o $@.ptx.o && $(COMPILE2) -c $< -o $<.cpu.o && ld $(LDBITS) -r $<.cpu.o $@.ptx.o $@.def.o -o $@
 else
+division_scs.o: division_scs.c scs.h scs_config.h \
+	scs_private.h division_scs.i
+	$(COMPILE2) -c $< -o $@
 endif
 
 ifeq ($(FC),pgf90)
 scs2double.o: scs2double.c scs.h scs_config.h scs_private.h scs2double.i
 	$(CLANG2) -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && touch $(basename $<).def.cu && $(NVCC) -m$(BITS) $(basename $<).def.cu --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -o $@.def.o -keep && touch $(basename $<).def.module_id && objcopy --weaken-symbol=__fatbinwrap`cat $(basename $<).def.module_id` $@.def.o && $(NVCC) -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=`cat $(basename $<).def.module_id` -o $@.ptx.o && $(COMPILE2) -c $< -o $<.cpu.o && ld $(LDBITS) -r $<.cpu.o $@.ptx.o $@.def.o -o $@
 else
+scs2double.o: scs2double.c scs.h scs_config.h scs_private.h scs2double.i
+	$(COMPILE2) -c $< -o $@
 endif
 
 ifeq ($(FC),pgf90)
 zero_scs.o: zero_scs.c scs.h scs_config.h scs_private.h zero_scs.i
 	$(CLANG2) -emit-llvm -c $< -o $(basename $<).bc && $(CICC) -nvvmir-library $(basename $<).bc $(basename $<).i -o $(basename $<).ptx && $(NVCC) -m$(BITS) $(basename $<).def.cu --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -o $@.def.o -keep && touch $(basename $<).def.module_id && objcopy --weaken-symbol=__fatbinwrap`cat $(basename $<).def.module_id` $@.def.o && $(NVCC) -m$(BITS) $(basename $<).ptx --device-c -arch=compute_$(GPUARCH) -code=sm_$(GPUARCH),compute_$(GPUARCH) -D__NV_MODULE_ID=`cat $(basename $<).def.module_id` -o $@.ptx.o && $(COMPILE2) -c $< -o $<.cpu.o && ld $(LDBITS) -r $<.cpu.o $@.ptx.o $@.def.o -o $@
 else
+zero_scs.o: zero_scs.c scs.h scs_config.h scs_private.h zero_scs.i
+	$(COMPILE2) -c $< -o $@
 endif
 
 ifeq ($(FC),pgf90)
