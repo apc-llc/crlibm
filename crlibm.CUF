@@ -99,7 +99,7 @@ contains
 #ifdef GPU
   attributes(device) & 
 #endif
-  function asin_rn(x)
+  function asin_rn(x) bind(C)
   implicit none
   double precision :: asin_rn
   double precision, value :: x
@@ -122,7 +122,7 @@ contains
 #ifdef GPU
   attributes(device) & 
 #endif
-  function acos_rn(x)
+  function acos_rn(x) bind(C)
   implicit none
   double precision :: acos_rn
   double precision, value :: x
@@ -147,7 +147,7 @@ contains
 #ifdef GPU
   attributes(device) & 
 #endif      
-  function atan2_rn(y,x)
+  function atan2_rn(y,x) bind(C)
   implicit none
   double precision :: atan2_rn
   double precision, value :: y,x
